@@ -4,11 +4,18 @@ Nbextension to run Python unittests in a TDD fashion directly from the notebook
 
 ## Testing the extension
 
+### Successful procedure
+
+    $ jupyter nbextension install tdd --user
+    $ jupyter nbextension enable tdd/main --user
+
+
+### Failed procedure
 Open a notebook, and execute the following code:
 
     import notebook.nbextensions
 
-    notebook.nbextensions.install_nbextension('https://rawgithub.com/Fandekasp/jupyter-python-tdd/master/tdd.js', user=True)
+    notebook.nbextensions.install_nbextension('https://rawgithub.com/Fandekasp/jupyter-python-tdd/master/nbextension/tdd.js', user=True)
 in a new cell, run:
 
     %%javascript
