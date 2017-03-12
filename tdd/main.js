@@ -40,7 +40,7 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
     st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
     st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
     st.nbcontainer_width = $('#notebook-container').css('width')
-    st.oldTocHeight = undefined
+    st.oldTddHeight = undefined
 
     st.cell_tdd = undefined;
     st.tdd_index=0;
@@ -90,7 +90,7 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
 //***********************************************************************
 // ----------------------------------------------------------------------
 
-  function toggleToc() {
+  function toggleTdd() {
     toggle_tdd(cfg,st)
   }
 
@@ -103,8 +103,8 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
       IPython.toolbar.add_buttons_group([
         {
           'label'   : 'Test Runner',
-          'icon'    : 'fa-list',
-          'callback':  toggleToc,
+          'icon'    : 'fa-check-square-o',
+          'callback':  toggleTdd,
           'id'      : 'tdd_button'
         }
       ]);
@@ -147,12 +147,12 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
         var prev_reply_callback = callbacks.shell.reply;
         callbacks.shell.reply = function(msg) {
             if (msg.msg_type === 'execute_reply') {
-                setTimeout(function(){
-                       $(tdd).find('.tdd-item-highlight-execute').removeClass('tdd-item-highlight-execute')
-              rehighlight_running_cells() // re-highlight running cells
-                 }, 100);
-                var c = IPython.notebook.get_selected_cell();
-                highlight_tdd_item({ type: 'selected' }, { cell: c })
+              setTimeout(function(){
+                $(tdd).find('.tdd-item-highlight-execute').removeClass('tdd-item-highlight-execute')
+                rehighlight_running_cells() // re-highlight running cells
+              }, 100);
+              var c = IPython.notebook.get_selected_cell();
+              highlight_tdd_item({ type: 'selected' }, { cell: c })
             }
             return prev_reply_callback(msg);
         };
@@ -161,9 +161,10 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
   }
 
 
-  function excute_codecell_callback(evt, data) {
+  function execute_codecell_callback(evt, data) {
       var cell = data.cell;
       highlight_tdd_item(evt, data);
+      run_tests(evt, data);
   }
 
   function rehighlight_running_cells() {
@@ -177,11 +178,11 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
 
   var tdd_init = function() {
       // read configuration, then call tdd
-      cfg = read_config(cfg, function() { table_of_contents(cfg, st); }); // called after config is stable
+      cfg = read_config(cfg, function() { test_runner(cfg, st); }); // called after config is stable
       // event: render tdd for each markdown cell modification
       $([IPython.events]).on("rendered.MarkdownCell",
           function(evt, data) {
-              table_of_contents(cfg, st); // recompute the tdd
+              test_runner(cfg, st); // recompute the tdd
               rehighlight_running_cells() // re-highlight running cells
               highlight_tdd_item(evt, data); // and of course the one currently rendered
           });
@@ -189,14 +190,14 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
       $([IPython.events]).on('select.Cell', highlight_tdd_item)
           // event: if kernel_ready (kernel change/restart): add/remove a menu item
       $([IPython.events]).on("kernel_ready.Kernel", function() {
-              addSaveAsWithToc();
+              addSaveAsWithTdd();
           })
           // add a save as HTML with tdd included
-      addSaveAsWithToc();
+      addSaveAsWithTdd();
       //
       // Highlight cell on execution
       patch_CodeCell_get_callbacks()
-      $([Jupyter.events]).on('execute.CodeCell', excute_codecell_callback);
+      $([Jupyter.events]).on('execute.CodeCell', execute_codecell_callback);
   }
 
 
@@ -225,7 +226,7 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
   return {
     load_ipython_extension : load_ipython_extension,
     toggle_tdd : toggle_tdd,
-    table_of_contents : table_of_contents
+    test_runner : test_runner
   };
 
 });
