@@ -39,6 +39,7 @@ Do:
 * Need to run a test runner behind. Investigate how to communicate with test runner from extension
 * Test runner should trigger itself automatically with watchdog on the notebook
 * Notebook should be converted on the fly to .py file in order for the test runner to work
+* Rename repo into jupyter-tdd, and handle test runner per kernel
 
 
 Don't do:
