@@ -171,6 +171,7 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
       $.each($('.running'), // re-highlight running cells
           function(idx, elt) {
               highlight_tdd_item({ type: "execute" }, $(elt).data())
+              run_tests(evt, data);
           }
       )
   }
@@ -185,6 +186,7 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
               test_runner(cfg, st); // recompute the tdd
               rehighlight_running_cells() // re-highlight running cells
               highlight_tdd_item(evt, data); // and of course the one currently rendered
+              run_tests(evt, data);
           });
       // event: on cell selection, highlight the corresponding item
       $([IPython.events]).on('select.Cell', highlight_tdd_item)

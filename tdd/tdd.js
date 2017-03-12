@@ -203,7 +203,7 @@ function run_tests(evt, data) {
     .append(
       $('<div id="tdd-header"/>')
       .addClass("header")
-      .text("Contents ")
+      .text("TDD")
       .append(
         $("<a/>")
         .attr("href", "#")
@@ -246,40 +246,6 @@ function run_tests(evt, data) {
       ).append(
         $("<span/>")
         .html("&nbsp;&nbsp")
-      ).append(
-        $("<a/>")
-        .attr("href", "#")
-        .addClass("number_sections-btn")
-        .text("n")
-        .attr('title', 'Number text sections')
-        .click( function(){
-          cfg.number_sections=!(cfg.number_sections);
-          if(liveNotebook){
-            IPython.notebook.metadata.tdd['number_sections']=cfg.number_sections;
-
-            IPython.notebook.set_dirty();}
-          //$('.tdd-item-num').toggle();
-          cfg.number_sections ? $('.tdd-item-num').show() : $('.tdd-item-num').hide()
-          //test_runner();
-          return false;
-        })
-      ).append(
-        $("<span/>")
-        .html("&nbsp;&nbsp;")
-        ).append(
-        $("<a/>")
-        .attr("href", "#")
-        .addClass("tdd_cell_sections-btn")
-        .html("t")
-        .attr('title', 'Add a tdd section in Notebook')
-        .click( function(){
-          cfg.tdd_cell=!(cfg.tdd_cell);
-          if(liveNotebook){
-            IPython.notebook.metadata.tdd['tdd_cell']=cfg.tdd_cell;
-            IPython.notebook.set_dirty();}
-          test_runner(cfg,st);
-          return false;
-        })
       )
     ).append(
         $("<div/>").attr("id", "tdd").addClass('tdd')
