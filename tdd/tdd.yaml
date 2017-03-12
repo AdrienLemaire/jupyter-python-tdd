@@ -1,0 +1,51 @@
+Type: IPython Notebook Extension
+Name: Test Runner 
+Description: The tdd extension enables to collect all running headers and display them in a floating window, as a sidebar or with a navigation menu. The extension is also draggable, resizable, collapsable, dockable and features automatic numerotation with unique links ids, and an optional tdd cell. 
+Link: README.md
+Icon: icon.png
+Main: main.js
+Compatibility: 4.x
+Parameters:
+- name: tdd.number_sections
+  description: Automatically number notebook's sections
+  input_type: checkbox
+  default: true
+- name: tdd.threshold
+  description: Maximum level of nested sections to display on the tables of contents
+  input_type: number
+  min: -1
+  step: 1
+  default: 4
+- name: tdd.tdd_cell
+  description: Add a Test Runner cell at the top of the notebook
+  input_type: checkbox
+  default: false
+- name: tdd.tdd_window_display
+  description: Display tdd window/sidebar at startup
+  input_type: checkbox
+  default: false
+- name: tdd.sideBar
+  description: Display Test Runner as a sidebar (otherwise as a floating window)
+  input_type: checkbox
+  default: true  
+- name: tdd.navigate_menu
+  description: Display Test Runner as a navigation menu
+  input_type: checkbox
+  default: true
+- name: tdd.moveMenuRight
+  description: Move notebook's title and menu on the left instead of being centered -- This provides a better look when the tdd/sidebar is present
+  input_type: checkbox
+  default: true    
+- name: tdd.colors.hover_highlight
+  input_type: color
+  description: Hover color in tdd
+  default: "#DAA520"  
+- name: tdd.colors.selected_highlight
+  input_type: color
+  description: Color of sections with selected elements
+  default: "#FFD700"  
+- name: tdd.colors.running_highlight
+  input_type: color
+  description: Color of sections with running cells
+  default: "#FF0000"  
+
