@@ -131,7 +131,6 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
     };
   }
 
-
   function execute_codecell_callback(evt, data) {
     var cell = data.cell;
     run_tests();

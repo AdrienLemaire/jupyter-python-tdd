@@ -2,48 +2,38 @@
 Nbextension to run Python unittests in a TDD fashion directly from the notebook
 
 
-## Testing the extension
+## Install
 
-### Successful procedure
-
+    $ git clone https://github.com/Fandekasp/jupyter-python-tdd.git
+    $ cd jupyter-python-tdd/
     $ jupyter nbextension install tdd --user
     $ jupyter nbextension enable tdd/main --user
 
 
-### Failed procedure
-Open a notebook, and execute the following code:
+## Features
 
-    import notebook.nbextensions
+* Auto-discovers all classes which name end with **Test**. Eg:
 
-    notebook.nbextensions.install_nbextension('https://rawgithub.com/Fandekasp/jupyter-python-tdd/master/nbextension/tdd.js', user=True)
-in a new cell, run:
+    class MyTest(unittest.TestCase):
 
-    %%javascript
-    Jupyter.utils.load_extensions('tdd')
-
-
-## Plan for building the extension
+* Runs all the tests everytime a CodeCell is executed.
+* Displays unittest results in the TDD placeholder.
+* Placeholder is pannable on the right side of the screen, and draggable elsewhere.
+* The TDD button available in the top menu is shown as a checkbox icon.
+* The TDD button and the placeholder title are colorized green or red depending on the test results.
 
 
-### Goal
-* Run unittests in real time to notify user when a test break during a code modification.
-* Show coverage
-* Show visual similar to toc2 extension
-    * panel on the side to display coverage and test results on the fly
-    * top button to hide/show panel. Top button can be colorized to notify user
+## To Do
+- [ ] Integrate Flake8 to respect PEP8 recommendations.
+- [ ] Show code coverage to cover 80%+ of the code.
+- [ ] Auto-run tests on code modification (not only on code execution)
+- [ ] Write tests to cover the project (yeah, I know...)
+- [ ] Adapt and upload extension to [PyPI](https://pypi.python.org/pypi) and [AUR](https://aur.archlinux.org/).
+- [ ] Adapt and submit extension to [jupyter_contrib_nbextensions](https://github.com/ipython-contrib/jupyter_contrib_nbextensions)
 
-
-### Thoughts
-
-Do:
-* Need to run a test runner behind. Investigate how to communicate with test runner from extension
-* Test runner should trigger itself automatically with watchdog on the notebook
-* Notebook should be converted on the fly to .py file in order for the test runner to work
-* Rename repo into jupyter-tdd, and handle test runner per kernel
-
-
-Don't do:
-
-* Attaching unittests to cells might not be a good idea (test might break due to dependency in other cell)
-* Not a good idea to have a different cell type for unittests. It's still code after all, and we can use the codefolding extension to hide tests
-
+## Contributions welcome
+* Write new `HtmlTestRunner` & `HtmlTestResult` classes, to improve the html rendering.
+  Write them as a new plugin to submit to unittest and/or py.test projects.
+* Support other test runners (only unittest atm). I tried to look up at nose and
+  py.test test runners, but it appears more difficult to implement than I expected.
+* Support other kernels (only IPython atm).
