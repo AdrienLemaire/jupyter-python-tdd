@@ -82,7 +82,7 @@ function handle_output(out){
         res = "[out type not implemented]";
         console.dir(out);
     }
-    document.getElementById("tdd").innerText = res;
+    $("#tdd").append(res.replace(/\n/g,'<br/>'));
 	resArray = res.match(/[^\r\n]+/g);
 	if (resArray[resArray.length-1] == 'OK') {
 		$('#tdd_button .fa').css('color', 'green');
@@ -95,16 +95,19 @@ function handle_output(out){
 function run_tests() {
   var IPythonKernel = IPython.notebook.metadata.kernelspec.language == "python";
   if (IPythonKernel) {
-      var testclass = 'MyTest';
+    codelines = $('.code_cell .CodeMirror').text();
+	re = /class (\w+Test)/gm;
+	while ((testClass = re.exec(codelines)) !== null) {
+      var testclass = testClass[1];
       var test_runner = 'a = ' + testclass + '();' +
                         'suite = unittest.TestLoader().loadTestsFromModule(a);' +
                         'bob = unittest.TextTestRunner().run(suite);';
       var kernel = IPython.notebook.kernel;
       var callbacks = { 'iopub' : {'output' : handle_output}};
       var msg_id = kernel.execute(test_runner, callbacks);
-      console.log('msg id: ' + msg_id);
+	}
   } else {
-      alert("Sorry; this only works with a IPython kernel");
+    alert("Sorry; this only works with a IPython kernel");
   }
 }
 
