@@ -16,9 +16,7 @@ Nbextension to run Python unittests in a TDD fashion directly from the notebook
 
 ## Features
 
-* Auto-discovers all classes which name end with **Test**. Eg:
-
-    class MyTest(unittest.TestCase):
+* Auto-discovers all classes which name end with **Test**. Eg `class MyTest(unittest.TestCase):`
 
 * Runs all the tests everytime a CodeCell is executed.
 * Displays unittest results in the TDD placeholder.
@@ -42,3 +40,9 @@ Nbextension to run Python unittests in a TDD fashion directly from the notebook
 * Support other test runners (only unittest atm). I tried to look up at nose and
   py.test test runners, but it appears more difficult to implement than I expected.
 * Support other kernels (only IPython atm).
+
+
+## Credits
+
+The [toc2 nbextension](https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tree/master/src/jupyter_contrib_nbextensions/nbextensions/toc2)
+has been used as model to build this extension, especially the logic to make the placeholder draggable & pannable.
