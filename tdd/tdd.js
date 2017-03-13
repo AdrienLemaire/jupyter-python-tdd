@@ -232,7 +232,9 @@ function run_tests() {
           drag: function( event, ui ) {
 
         // If dragging to the left side, then transforms in sidebar
-        if ((ui.position.left<=0) && (cfg.sideBar==false)){
+		wrapper_width = parseInt($('#tdd-wrapper').css('width'), 10);
+        if ((ui.position.left >= $('#notebook').width()-wrapper_width) && (cfg.sideBar==false)){
+		  console.log('case 1');
           cfg.sideBar = true;
           st.oldTddHeight = $('#tdd-wrapper').css('height');
           if(liveNotebook){
@@ -240,21 +242,23 @@ function run_tests() {
             IPython.notebook.set_dirty();}
           //$('#tdd-wrapper').css('height','');
           tdd_wrapper.removeClass('float-wrapper').addClass('sidebar-wrapper');
-          $('#notebook-container').css('margin-right',$('#tdd-wrapper').width()+30);
-          $('#notebook-container').css('width',$('#notebook').width()-$('#tdd-wrapper').width()-30);
+          $('#notebook-container').css('margin-right',wrapper_width+30);
+          $('#notebook-container').css('width',$('#notebook').width()-wrapper_width-30);
           ui.position.top = liveNotebook ? $('#header').height() : 0;
-          ui.position.left = 0;
+          ui.position.left = $('#notebook').width()-wrapper_width;
           if(liveNotebook){
             $('#tdd-wrapper').css('height',$('#site').height());}
           else{
           $('#tdd-wrapper').css('height','96%');}
           $('#tdd').css('height', $('#tdd-wrapper').height()-$('#tdd-header').height());
         }
-        if (ui.position.left<=0) {
-          ui.position.left = 0;
+        if (ui.position.left >= $('#notebook').width()-wrapper_width) {
+		  console.log('case 2');
+          ui.position.left = $('#notebook').width()-wrapper_width;
           ui.position.top = liveNotebook ? $('#header').height() : 0;
         }
-        if ((ui.position.left>0) && (cfg.sideBar==true)) {
+        if ((ui.position.left < $('#notebook').width()-wrapper_width) && (cfg.sideBar==true)) {
+		  console.log('case 3');
           cfg.sideBar = false;
           if(liveNotebook){
             IPython.notebook.metadata.tdd['sideBar']=false;
@@ -285,11 +289,12 @@ function run_tests() {
           },
     });
 
+
     $('#tdd-wrapper').resizable({
         resize : function(event,ui){
           if (cfg.sideBar){
-             $('#notebook-container').css('margin-left',$('#tdd-wrapper').width()+30)
-             $('#notebook-container').css('width',$('#notebook').width()-$('#tdd-wrapper').width()-30)
+             $('#notebook-container').css('margin-right',wrapper_width+30)
+             $('#notebook-container').css('width',$('#notebook').width()-wrapper_width-30)
           }
           else {
             $('#tdd').css('height', $('#tdd-wrapper').height()-$('#tdd-header').height());
@@ -476,6 +481,7 @@ var test_runner = function (cfg,st) {
           $('#notebook-container').css('width',$('#notebook').width()-$('#tdd-wrapper').width()-30);
           $('#tdd-wrapper').css('height',liveNotebook ? $('#site').height(): $(window).height() - 10);
           $('#tdd-wrapper').css('top', liveNotebook ? $('#header').height() : 0);
+		  $('#tdd-wrapper').css('left', liveNotebook ? $('#notebook').width()-$('#tdd-wrapper').width() : 0);
           }
         } else{
           $('#notebook-container').css('margin-right',30);
