@@ -25,8 +25,6 @@ var make_link = function(h, num_lbl) {
                 IPython.notebook.get_selected_cell().unselect(); //unselect current cell
                 var new_selected_cell = $("[id='" + h.attr('id') + "']").parents('.unselected').switchClass('unselected', 'selected')
                 new_selected_cell.data('cell').selected = true;
-                var cell = new_selected_cell.data('cell') // IPython.notebook.get_selected_cell()
-                highlight_tdd_item("tdd_link_click", {cell: cell})
             }
         })
     return a;
@@ -59,29 +57,6 @@ var ol_depth = function (element) {
 };
 
 
-function highlight_tdd_item(evt, data) {
-  var c = data.cell.element; //
-  if (c) {
-    var ll = $(c).find(':header')
-    if (ll.length == 0) {
-      var ll = $(c).prevAll().find(':header')
-    }
-    var elt = ll[ll.length - 1]
-    if (elt) {
-      var highlighted_item = $(tdd).find('a[href="#' + elt.id + '"]')
-      if (evt.type == "execute") {
-        // remove the selected class and add execute class
-        // il the cell is selected again, it will be highligted as selected+running
-        highlighted_item.removeClass('tdd-item-highlight-select').addClass('tdd-item-highlight-execute')
-            //console.log("->>> highlighted_item class",highlighted_item.attr('class'))
-      } else {
-        $(tdd).find('.tdd-item-highlight-select').removeClass('tdd-item-highlight-select')
-        highlighted_item.addClass('tdd-item-highlight-select')
-      }
-    }
-  }
-}
-
 function handle_output(out){
     console.log('in handle output: ' + out);
     console.dir(out);
@@ -108,10 +83,16 @@ function handle_output(out){
         console.dir(out);
     }
     document.getElementById("tdd").innerText = res;
+	resArray = res.match(/[^\r\n]+/g);
+	if (resArray[resArray.length-1] == 'OK') {
+		$('#tdd_button .fa').css('color', 'green');
+	} else {
+		$('#tdd_button .fa').css('color', 'red');
+	}
 }
 
 
-function run_tests(evt, data) {
+function run_tests() {
   var IPythonKernel = IPython.notebook.metadata.kernelspec.language == "python";
   if (IPythonKernel) {
       var testclass = 'MyTest';
@@ -479,119 +460,17 @@ var test_runner = function (cfg,st) {
       create_tdd_div(cfg,st);
     }
     var segments = [];
-    var ul = $("<ul/>").addClass("tdd-item").attr('id','tdd-level0');
-
-     // update tdd element
-     $("#tdd").empty().append(ul);
 
 
     st.cell_tdd = undefined;
    // if cfg.tdd_cell=true, add and update a tdd cell in the notebook.
 
     if(liveNotebook){
-      ///look_for_cell_tdd(process_cell_tdd);
-      process_cell_tdd(cfg,st);
+	  run_tests();
     }
     //process_cell_tdd();
 
     var cell_tdd_text = "# Test Runner\n <p>";
-    var depth = 1; //var depth = ol_depth(ol);
-    var li= ul;//yes, initialize li with ul!
-    var all_headers= $("#notebook").find(":header");
-    var min_lvl=1, lbl_ary= [];
-    for(; min_lvl <= 6; min_lvl++){ if(all_headers.is('h'+min_lvl)){break;} }
-    for(var i= min_lvl; i <= 6; i++){ lbl_ary[i - min_lvl]= 0; }
-
-    //loop over all headers
-    all_headers.each(function (i, h) {
-      var level = parseInt(h.tagName.slice(1), 10) - min_lvl + 1;
-      // skip below threshold
-      if (level > cfg.threshold){ return; }
-      // skip headings with no ID to link to
-      if (!h.id){ return; }
-      // skip tdd cell if present
-      if (h.id=="Table-of-Contents"){ return; }
-      //If h had already a number, remove it
-      $(h).find(".tdd-item-num").remove();
-      var num_str= incr_lbl(lbl_ary,level-1).join('.');// numbered heading labels
-      var num_lbl= $("<span/>").addClass("tdd-item-num")
-            .text(num_str).append('&nbsp;').append('&nbsp;');
-
-      // walk down levels
-      for(var elm=li; depth < level; depth++) {
-          var new_ul = $("<ul/>").addClass("tdd-item");
-          elm.append(new_ul);
-          elm= ul= new_ul;
-      }
-      // walk up levels
-      for(; depth > level; depth--) {
-          // up twice: the enclosing <ol> and <li> it was inserted in
-          ul= ul.parent();
-          while(!ul.is('ul')){ ul= ul.parent(); }
-      }
-      // Change link id -- append current num_str so as to get a kind of unique anchor
-      // A drawback of this approach is that anchors are subject to change and thus external links can fail if tdd changes
-      // Anyway, one can always add a <a name="myanchor"></a> in the heading and refer to that anchor, eg [link](#myanchor)
-      // This anchor is automatically removed when building tdd links. The original id is also preserved and an anchor is created
-      // using it.
-      // Finally a heading line can be linked to by [link](#initialID), or [link](#initialID-num_str) or [link](#myanchor)
-        if (!$(h).attr("saveid")) {$(h).attr("saveid", h.id)} //save original id
-        h.id=$(h).attr("saveid")+'-'+num_str.replace(/\./g,'');
-        // change the id to be "unique" and tdd links to it
-        // (and replace '.' with '' in num_str since it poses some pb with jquery)
-        var saveid = $(h).attr('saveid')
-        //escape special chars: http://stackoverflow.com/questions/3115150/
-        var saveid_search=saveid.replace(/[-[\]{}():\/!;&@=$£%§<>%"'*+?.,~\\^$|#\s]/g, "\\$&");
-        if ($(h).find("a[name="+saveid_search+"]").length==0){  //add an anchor with original id (if it doesnt't already exists)
-             $(h).prepend($("<a/>").attr("name",saveid)); }
-
-
-      // Create tdd entry, append <li> tag to the current <ol>. Prepend numbered-labels to headings.
-      li=$("<li/>").append( make_link( $(h), num_lbl));
-
-      ul.append(li);
-      $(h).prepend(num_lbl);
-
-
-      //tdd_cell:
-      if(cfg.tdd_cell) {
-          var leves = '<div class="lev' + level.toString() + ' tdd-item">';
-          var lnk=make_link_originalid($(h))
-          cell_tdd_text += leves + $('<p>').append(lnk).html()+'</div>';
-          //workaround for https://github.com/jupyter/notebook/issues/699 as suggested by @jhamrick
-          lnk.on('click',function(){setTimeout(function(){$.ajax()}, 100) })
-      }
-    });
-
-
-
-     // update navigation menu
-     if (cfg.navigate_menu) {
-         var pop_nav = function() { //callback for create_nav_menu
-             //$('#Navigate_menu').empty().append($("<div/>").attr("id", "navigate_menu").addClass('tdd').append(ul.clone().attr('id', 'navigate_menu-level0')))
-             $('#navigate_menu').empty().append($('#tdd-level0').clone().attr('id', 'navigate_menu-level0'))
-         }
-         if ($('#Navigate_menu').length == 0) {
-             create_navigate_menu(pop_nav);
-         } else {
-             pop_nav()
-         }
-     } else { // If navigate_menu is false but the menu already exists, then remove it
-         if ($('#Navigate_menu').length > 0) $('#Navigate_sub').remove()
-     }
-
-
-
-    if(cfg.tdd_cell) {
-         st.rendering_tdd_cell = true;
-         //IPython.notebook.to_markdown(tdd_index);
-         st.cell_tdd.set_text(cell_tdd_text);
-         st.cell_tdd.render();
-    };
-
-    // Show section numbers if enabled
-    cfg.number_sections ? $('.tdd-item-num').show() : $('.tdd-item-num').hide()
-
     $(window).resize(function(){
         $('#tdd').css({maxHeight: $(window).height() - 30});
         $('#tdd-wrapper').css({maxHeight: $(window).height() - 10});

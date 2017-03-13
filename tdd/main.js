@@ -72,8 +72,6 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
             cfg.moveMenuRight = IPython.notebook.metadata.tdd.moveMenuRight = config.data.tdd.moveMenuRight;
         }
       }
-      // create highlights style section in document
-      create_additional_css()
       // call callbacks
       callback && callback();
       st.config_loaded = true;
@@ -120,22 +118,6 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
   };
 
 
-  function create_additional_css() {
-      var sheet = document.createElement('style')
-      sheet.innerHTML = "#tdd-level0 li > a:hover {  display: block; background-color: " + cfg.colors.hover_highlight + " }\n" +
-          ".tdd-item-highlight-select  {background-color: " + cfg.colors.selected_highlight + "}\n" +
-          ".tdd-item-highlight-execute  {background-color: " + cfg.colors.running_highlight + "}\n" +
-          ".tdd-item-highlight-execute.tdd-item-highlight-select   {background-color: " + cfg.colors.selected_highlight + "}"
-      if (cfg.moveMenuRight){
-        sheet.innerHTML += "div#menubar-container, div#header-container {\n"+
-            "width: auto;\n"+
-            "padding-right: 20px; }"
-      }
-      document.body.appendChild(sheet);
-  }
-
-
-
   var CodeCell = codecell.CodeCell;
 
   function patch_CodeCell_get_callbacks() {
@@ -149,10 +131,10 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
             if (msg.msg_type === 'execute_reply') {
               setTimeout(function(){
                 $(tdd).find('.tdd-item-highlight-execute').removeClass('tdd-item-highlight-execute')
-                rehighlight_running_cells() // re-highlight running cells
+                run_tests();
               }, 100);
               var c = IPython.notebook.get_selected_cell();
-              highlight_tdd_item({ type: 'selected' }, { cell: c })
+              run_tests();
             }
             return prev_reply_callback(msg);
         };
@@ -163,17 +145,7 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
 
   function execute_codecell_callback(evt, data) {
       var cell = data.cell;
-      highlight_tdd_item(evt, data);
-      run_tests(evt, data);
-  }
-
-  function rehighlight_running_cells() {
-      $.each($('.running'), // re-highlight running cells
-          function(idx, elt) {
-              highlight_tdd_item({ type: "execute" }, $(elt).data())
-              run_tests(evt, data);
-          }
-      )
+      run_tests();
   }
 
 
@@ -184,18 +156,8 @@ define(["require", "jquery", "base/js/namespace",  'services/config',
       $([IPython.events]).on("rendered.MarkdownCell",
           function(evt, data) {
               test_runner(cfg, st); // recompute the tdd
-              rehighlight_running_cells() // re-highlight running cells
-              highlight_tdd_item(evt, data); // and of course the one currently rendered
-              run_tests(evt, data);
+              run_tests();
           });
-      // event: on cell selection, highlight the corresponding item
-      $([IPython.events]).on('select.Cell', highlight_tdd_item)
-          // event: if kernel_ready (kernel change/restart): add/remove a menu item
-      $([IPython.events]).on("kernel_ready.Kernel", function() {
-              addSaveAsWithTdd();
-          })
-          // add a save as HTML with tdd included
-      addSaveAsWithTdd();
       //
       // Highlight cell on execution
       patch_CodeCell_get_callbacks()
