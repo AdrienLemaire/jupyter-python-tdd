@@ -87,11 +87,19 @@ function handle_output(out){
 
 	resArray = res.match(/[^\r\n]+/g);
 	resHtml = '';
-	var spanclass = null;
 	if (resArray[resArray.length-1] == 'OK') {
+		$('#tdd_button .fa').removeClass('tdd-red');
 		$('#tdd_button .fa').addClass('tdd-green');
+		$('#tdd-header').removeClass('tdd-red');
+		$('#tdd-header').addClass('tdd-green');
+		$('#tdd-header').text('All passed!')
+
 	} else {
+		$('#tdd_button .fa').removeClass('tdd-green');
 		$('#tdd_button .fa').addClass('tdd-red');
+		$('#tdd-header').removeClass('tdd-green');
+		$('#tdd-header').addClass('tdd-red');
+		$('#tdd-header').text('Failed')
 	}
 }
 
@@ -240,7 +248,6 @@ function run_tests() {
           if(liveNotebook){
             IPython.notebook.metadata.tdd['sideBar']=true;
             IPython.notebook.set_dirty();}
-          //$('#tdd-wrapper').css('height','');
           tdd_wrapper.removeClass('float-wrapper').addClass('sidebar-wrapper');
           $('#notebook-container').css('margin-right',wrapper_width+30);
           $('#notebook-container').css('width',$('#notebook').width()-wrapper_width-30);
