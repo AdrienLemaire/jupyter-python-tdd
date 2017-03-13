@@ -1,4 +1,8 @@
 # jupyter-python-tdd
+
+![maintained](https://img.shields.io/maintenance/yes/2017.svg)
+[![GitHub tag](https://img.shields.io/github/tag/Fandekasp/jupyter-python-tdd.svg?maxAge=3600&label=Github)](https://github.com/Fandekasp/jupyter-python-tdd)
+
 Nbextension to run Python unittests in a TDD fashion directly from the notebook
 
 
@@ -28,6 +32,7 @@ Nbextension to run Python unittests in a TDD fashion directly from the notebook
 - [ ] Show code coverage to cover 80%+ of the code.
 - [ ] Auto-run tests on code modification (not only on code execution)
 - [ ] Write tests to cover the project (yeah, I know...)
+- [ ] Support Python 2 and Python 3 kernels (only Python3 tested atm)
 - [ ] Adapt and upload extension to [PyPI](https://pypi.python.org/pypi) and [AUR](https://aur.archlinux.org/).
 - [ ] Adapt and submit extension to [jupyter_contrib_nbextensions](https://github.com/ipython-contrib/jupyter_contrib_nbextensions)
 
