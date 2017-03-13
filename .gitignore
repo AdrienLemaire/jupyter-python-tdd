@@ -6,3 +6,4 @@
 Tests.ipynb
 Tests.py
 *.ignore
+__pycache__

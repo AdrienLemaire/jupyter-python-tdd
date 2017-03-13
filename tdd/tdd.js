@@ -60,7 +60,7 @@ var ol_depth = function (element) {
 function handle_output(out){
     console.log('in handle output: ' + out);
     console.dir(out);
-    var res = null;
+    res = null;
     // if output is a print statement
     if(out.msg_type == "stream"){
         console.log('It was a stream');
@@ -82,12 +82,16 @@ function handle_output(out){
         res = "[out type not implemented]";
         console.dir(out);
     }
-    $("#tdd").append(res.replace(/\n/g,'<br/>'));
+
+	document.getElementById('tdd').innerText += res.replace('__main__.','');
+
 	resArray = res.match(/[^\r\n]+/g);
+	resHtml = '';
+	var spanclass = null;
 	if (resArray[resArray.length-1] == 'OK') {
-		$('#tdd_button .fa').css('color', 'green');
+		$('#tdd_button .fa').addClass('tdd-green');
 	} else {
-		$('#tdd_button .fa').css('color', 'red');
+		$('#tdd_button .fa').addClass('tdd-red');
 	}
 }
 
@@ -96,47 +100,31 @@ function run_tests() {
   var IPythonKernel = IPython.notebook.metadata.kernelspec.language == "python";
   if (IPythonKernel) {
     codelines = $('.code_cell .CodeMirror').text();
-	re = /class (\w+Test)/gm;
-	while ((testClass = re.exec(codelines)) !== null) {
-      var testclass = testClass[1];
-      var test_runner = 'a = ' + testclass + '();' +
-                        'suite = unittest.TestLoader().loadTestsFromModule(a);' +
-                        'bob = unittest.TextTestRunner().run(suite);';
-      var kernel = IPython.notebook.kernel;
-      var callbacks = { 'iopub' : {'output' : handle_output}};
-      var msg_id = kernel.execute(test_runner, callbacks);
+	var test_runner = 'tdd_loader = unittest.TestLoader();'+
+					  'tdd_suite = unittest.TestSuite();';
+
+	// Load all TestCases
+	re_class = /class (\w+Test)/gm;
+	while ((testClass = re_class.exec(codelines)) !== null) {
+      var test_runner = test_runner + 'tdd_suite.addTests(tdd_loader.loadTestsFromModule('+testClass[1]+'()));';
 	}
+
+	// Clear previous output
+	$("#tdd").empty()
+
+	// Execute tests
+	test_runner = test_runner + 'unittest.TextTestResult.separator2 = "-"*40;'+
+			      'unittest.TextTestResult.separator1 = "="*40;'+
+				  'tdd_runner = unittest.TextTestRunner(failfast=True, buffer=True, verbosity=2);'+
+				  //'tdd_runner = unittest.TextTestRunner(failfast=True, buffer=True, verbosity=2);'+
+				  'tdd_runner.run(tdd_suite);';
+    var kernel = IPython.notebook.kernel;
+    var callbacks = { 'iopub' : {'output' : handle_output}};
+    var msg_id = kernel.execute(test_runner, callbacks);
   } else {
     alert("Sorry; this only works with a IPython kernel");
   }
 }
-
-
-  // extra download as html with tdd menu (needs IPython kernel)
- function addSaveAsWithTdd() {
-     var saveAsWithTdd = $('#save_html_with_tdd').length == 0
-     var IPythonKernel = IPython.notebook.metadata.kernelspec.language == "python"
-     if (IPythonKernel) {
-         if ($('#save_html_with_tdd').length == 0) {
-             $('#save_checkpoint').after("<li id='save_html_with_tdd'/>")
-             $('#save_html_with_tdd').append($('<a/>').text('Save as HTML (with tdd)').attr("href", "#"))
-             $('#save_html_with_tdd').click(function() {
-                 var IPythonKernel = IPython.notebook.metadata.kernelspec.language == "python"
-                 if (IPythonKernel) {
-                     var code = "!jupyter nbconvert '" + IPython.notebook.notebook_name + "' --template tdd"
-                     console.log(code)
-                     IPython.notebook.kernel.execute(code)
-                 } else {
-                     alert("Sorry; this only works with a IPython kernel");
-                     $('#save_html_with_tdd').remove();
-                 }
-             })
-         }
-     } else {
-         if ($('#save_html_with_tdd').length > 0) $('#save_html_with_tdd').remove()
-     }
- }
-
 
 
   var create_navigate_menu = function(callback) {

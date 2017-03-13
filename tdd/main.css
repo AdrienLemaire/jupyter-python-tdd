@@ -52,30 +52,6 @@ padding-left: 20px;
   overflow-x: auto;
 } 
 
-.tdd  ol.tdd-item {
-    counter-reset: item;
-    list-style: none;
-    padding: 0.1em;
-  }
-
-.tdd ol.tdd-item li {
-    display: block;
-  }
-
-#tdd ul.tdd-item {
-    list-style-type: none;
-    padding: 0;
-    margin:  0;
-}
-
-.tdd  ol.tdd-item li:before {
-    font-size: 90%;
-    font-family: Georgia, Times New Roman, Times, serif;
-    counter-increment: item;
-    content: counters(item, ".")" ";
-  }
-
-
 .float-wrapper {
   position: fixed !important;
   top: 120px;
@@ -103,7 +79,6 @@ padding-left: 20px;
     opacity: .99;
     overflow: hidden;
 }
-
 
 .col-md-9 {
   overflow:hidden;
@@ -157,12 +132,8 @@ padding-left: 20px;
     color: black;
 }
 
-/*
-These colors are now specified in js, after reading the extension's config stored in system
-and updated using the nbextension-configurator
-.tdd-item-highlight-select  {background-color: Gold} 
-.tdd-item-highlight-execute  {background-color: red} 
-.tdd-item-highlight-execute.tdd-item-highlight-select   {background-color: Gold} */
+.tdd-green  {color: green} 
+.tdd-red  {color: red} 
 
 .lev1 {margin-left: 80px}
 .lev2 {margin-left: 100px}
