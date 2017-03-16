@@ -26,10 +26,13 @@ Nbextension to run Python unittests in a TDD fashion directly from the notebook
 
 
 ## To Do
-- [ ] Integrate Flake8 to respect PEP8 recommendations.
-- [ ] Show code coverage to cover 80%+ of the code.
+- [ ] Fix bug unittest not loaded at start
 - [ ] Auto-run tests on code modification (not only on code execution)
 - [ ] Write tests to cover the project (yeah, I know...)
+- [ ] Make extension work regardless of the state of the following extensions: toc2, execute_time
+- [ ] Hide TDD button when no test class has been detected in the notebook
+- [ ] Integrate Flake8 to respect PEP8 recommendations.
+- [ ] Show code coverage to cover 80%+ of the code.
 - [ ] Support Python 2 and Python 3 kernels (only Python3 tested atm)
 - [ ] Adapt and upload extension to [PyPI](https://pypi.python.org/pypi) and [AUR](https://aur.archlinux.org/).
 - [ ] Adapt and submit extension to [jupyter_contrib_nbextensions](https://github.com/ipython-contrib/jupyter_contrib_nbextensions)
@@ -37,6 +40,8 @@ Nbextension to run Python unittests in a TDD fashion directly from the notebook
 ## Contributions welcome
 * Write new `HtmlTestRunner` & `HtmlTestResult` classes, to improve the html rendering.
   Write them as a new plugin to submit to unittest and/or py.test projects.
+* Auto-move tests in the TDD placeholder to have them separated from the actual code. Might be good to get inspired by the
+  [scratchpad extension](https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tree/master/src/jupyter_contrib_nbextensions/nbextensions/scratchpad).
 * Support other test runners (only unittest atm). I tried to look up at nose and
   py.test test runners, but it appears more difficult to implement than I expected.
 * Support other kernels (only IPython atm).
