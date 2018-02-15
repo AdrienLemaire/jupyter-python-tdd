@@ -8,11 +8,18 @@ Nbextension to run Python unittests in a TDD fashion directly from the notebook
 
 ## Install
 
+Manually:
+
     $ git clone https://github.com/Fandekasp/jupyter-python-tdd.git
     $ cd jupyter-python-tdd/
     $ jupyter nbextension install tdd --user
     $ jupyter nbextension enable tdd/main --user
 
+Via docker:
+
+    $ docker pull malcolmgin/datascience-notebook-tdd
+
+Confer [Malcolm Gin](https://hub.docker.com/r/malcolmgin/datascience-notebook-tdd/) docker image.
 
 ## Features
 
